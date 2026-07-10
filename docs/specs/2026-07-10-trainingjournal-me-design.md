@@ -1,9 +1,8 @@
 # TrainingJournal.me — design spec
 
 **Date:** 2026-07-10 · **Status:** approved design, pre-implementation
-**Origin:** generalization of the author's private `E:\Me` journal + RunPlan
-dashboard (`E:\Running Tracker`, https://runplan-gilt.vercel.app) into a
-publishable library.
+**Origin:** generalization of the author's private journal repo and running
+dashboard (a real, daily-synced instance) into a publishable library.
 
 ## 1. Pitch
 
@@ -141,7 +140,7 @@ append-only journal, subjective-vs-objective divergences recorded explicitly.
   inputs → drain the inbox (§7) → pull fresh daily data → append real trend
   points → generate today's workout detail (three tiers, day-of only by
   default) → regenerate the snapshot → `vercel deploy`. Same pattern as the
-  author's `runplan-daily-sync`.
+  author's daily sync routine.
 
 ## 6. Dashboard (`app/`)
 
