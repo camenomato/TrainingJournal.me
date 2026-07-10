@@ -27,7 +27,7 @@ function daysBetween(dateStr: string, ref: Date): number {
 // Single-series trend over a real-date window. Only actual readings are
 // plotted — sparse data renders sparse, never interpolated. The average is
 // window-scoped: it recomputes for the points in view on every zoom change.
-export function TrendChart({ data, label, unit = "", color = "var(--accent)", decimals = 0, defaultWindowDays = 30, today }: Props) {
+export function TrendChart({ data, label, unit = "", color = "var(--track)", decimals = 0, defaultWindowDays = 30, today }: Props) {
   const [windowDays, setWindowDays] = useState(defaultWindowDays);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -67,7 +67,7 @@ export function TrendChart({ data, label, unit = "", color = "var(--accent)", de
     <div className="card">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <span style={{ fontFamily: "var(--mono)", fontSize: 11, textTransform: "uppercase", letterSpacing: ".07em", color: "var(--ink-soft)" }}>{label}</span>
-        {last && <span style={{ fontSize: 20, fontWeight: 600, color }}>{last.value.toFixed(decimals)}<span style={{ fontSize: 11, color: "var(--ink-soft)", marginLeft: 4 }}>{unit}</span></span>}
+        {last && <span style={{ fontFamily: "var(--disp)", fontSize: 24, color }}>{last.value.toFixed(decimals)}<span style={{ fontFamily: "var(--mono)", fontSize: 10.5, color: "var(--ink-soft)", marginLeft: 4 }}>{unit}</span></span>}
       </div>
       <div style={{ display: "flex", gap: 4, margin: "6px 0" }}>
         {ZOOM_PRESETS.map((z) => (

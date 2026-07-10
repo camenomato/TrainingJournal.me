@@ -46,7 +46,7 @@ function Gate({ onUnlock }: { onUnlock: () => void }) {
 
   return (
     <form className="gate" onSubmit={submit}>
-      <h1>TrainingJournal.me</h1>
+      <div className="wordmark">TRAINING<span>JOURNAL</span></div>
       <input value={user} onChange={(e) => setUser(e.target.value)} placeholder="Username" autoComplete="username" />
       <input value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Password" type="password" autoComplete="current-password" />
       <button type="submit" disabled={busy}>{busy ? "Checking…" : "Unlock"}</button>
@@ -61,8 +61,8 @@ function SessionCard({ session, data }: { session: Session; data: PersonData }) 
   const detail = session.tiers?.[tier];
 
   return (
-    <div className="card">
-      <div style={{ fontFamily: "var(--mono)", fontSize: 11, textTransform: "uppercase", color: "var(--ink-soft)" }}>
+    <div className="card" style={{ marginTop: 14 }}>
+      <div className="tag">
         {session.status === "today" ? "Today" : session.day} — {session.label}
       </div>
       {session.note && <p className="note">{session.note}</p>}
@@ -132,8 +132,8 @@ export default function Page() {
   return (
     <div className="wrap">
       <header className="site">
-        <h1>TrainingJournal.me</h1>
-        <span className="sub">local-first · updated {snapshot.updatedAt}</span>
+        <div className="wordmark">TRAINING<span>JOURNAL</span></div>
+        <span className="sub">local-first<br />updated {snapshot.updatedAt}</span>
       </header>
 
       {snapshot.people.length > 1 && (
@@ -144,9 +144,10 @@ export default function Page() {
         </div>
       )}
 
-      <div className="card" style={{ marginBottom: 24 }}>
-        <span className="hint">{d.headline.label}</span>
-        <div style={{ fontSize: 42, fontWeight: 600, lineHeight: 1.1 }}>{d.headline.value}</div>
+      <div className="card hero">
+        <div className="bib">{d.headline.label}</div>
+        <span className="hint" style={{ textTransform: "uppercase", letterSpacing: ".12em" }}>Current fitness says</span>
+        <div className="hero-num">{d.headline.value}</div>
         <p className="why" style={{ margin: "6px 0 0" }}>{d.headline.detail}</p>
       </div>
 
@@ -191,8 +192,8 @@ export default function Page() {
             color={
               m.weeklyAverage !== undefined &&
               (m.higherIsBetter ? m.current < m.weeklyAverage : m.current > m.weeklyAverage)
-                ? "var(--warn)"
-                : "var(--accent)"
+                ? "var(--mod)"
+                : "var(--track)"
             }
           />
         ))}
@@ -206,8 +207,9 @@ export default function Page() {
       />
 
       <h2 className="section">Coach</h2>
-      <div className="card">
-        <p style={{ margin: 0, fontStyle: "italic" }}>&ldquo;{d.coachNote}&rdquo;</p>
+      <div className="coach">
+        <div className="pin" />
+        <p>&ldquo;{d.coachNote}&rdquo;</p>
       </div>
     </div>
   );
