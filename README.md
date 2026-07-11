@@ -31,6 +31,13 @@ the training block, week, and VO₂max:
 
 ![Today dashboard: hero, week plan, tiered session, readiness gauge, and last-sync panel](docs/screenshots/today-forrest.png)
 
+**A low-recovery lifting day** — the gauge reads Low, so the session drops to
+its back-off tier on its own, and the prescribed strength shows **per-set
+loads**: a real deadlift ramps, so each set carries its own weight rather than
+one number for the whole exercise:
+
+![Lifter's dashboard: low-recovery gauge and a per-set deadlift ramp](docs/screenshots/today-kratos.png)
+
 **Goals** — running, lifting, and cutting side by side, each bar derived from
 the two numbers printed above it (the hybrid athlete carries all three):
 

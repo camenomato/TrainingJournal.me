@@ -151,12 +151,30 @@ function SessionCard({ session, data }: { session: Session; data: PersonData }) 
           {detail.strength && (
             <table className="strength">
               <thead>
-                <tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>RPE</th><th>Weight</th></tr>
+                <tr><th>Exercise</th><th>Set</th><th>Reps</th><th>RPE</th><th>Weight</th></tr>
               </thead>
               <tbody>
-                {detail.strength.map((s, i) => (
-                  <tr key={i}><td>{s.exercise}</td><td>{s.sets}</td><td>{s.reps}</td><td>{s.rpe ?? "—"}</td><td>{s.weight ?? "—"}</td></tr>
-                ))}
+                {detail.strength.map((s, i) =>
+                  s.work ? (
+                    s.work.map((w, j) => (
+                      <tr key={`${i}-${j}`} className={j === 0 ? "ex-first" : undefined}>
+                        {j === 0 && <td className="ex" rowSpan={s.work!.length}>{s.exercise}</td>}
+                        <td>{j + 1}</td>
+                        <td>{w.reps}</td>
+                        <td>{w.rpe ?? "—"}</td>
+                        <td>{w.weight ?? "—"}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr key={i} className="ex-first">
+                      <td className="ex">{s.exercise}</td>
+                      <td>{s.sets}× straight</td>
+                      <td>{s.reps}</td>
+                      <td>{s.rpe ?? "—"}</td>
+                      <td>{s.weight ?? "—"}</td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           )}
@@ -177,8 +195,12 @@ function Together({ people }: { people: Person[] }) {
     <>
       <h2 className="section">Together</h2>
       <p className="hint" style={{ marginTop: 0 }}>
-        Everyone in this snapshot, side by side. Each column is that person&apos;s own
-        secret-free snapshot — nobody sees another&apos;s raw journal or health data.
+        Everyone in this snapshot, side by side — each column is that person&apos;s own
+        secret-free snapshot; nobody sees another&apos;s raw journal or health data.
+        Populate it two ways (docs/supabase.md): one agent syncing several
+        people&apos;s sources, or several people posting to one shared inbox. You
+        share only what you post — the inbox is insert-only, never a window into
+        private data.
       </p>
       <div className="together-grid">
         {people.map((p) => {

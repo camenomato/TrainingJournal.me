@@ -31,7 +31,23 @@ export type Source = {
 export type Tier = "under" | "target" | "over";
 
 export type RunSegment = { label: string; intensity: "easy" | "mod" | "hard"; widthPct: number };
-export type StrengthSet = { exercise: string; sets: number; reps: string; rpe?: number; weight?: string };
+
+// One working set with its own load — real barbell work ramps, so the weight
+// is per set, not one number for the whole exercise.
+export type WorkSet = { weight?: string; reps: string; rpe?: number };
+
+export type StrengthSet = {
+  exercise: string;
+  // Explicit per-set breakdown (a ramp, or straight top sets). Preferred for
+  // barbell lifts — this is what actually tells you the load for each set.
+  work?: WorkSet[];
+  // Shorthand for accessories genuinely done as N straight sets at one load.
+  // Ignored when `work` is present.
+  sets?: number;
+  reps?: string;
+  rpe?: number;
+  weight?: string;
+};
 
 export type SessionTier = {
   title: string;
@@ -367,7 +383,11 @@ export const snapshot: Snapshot = {
                 title: "Full body · prescribed", meta: "example of opted-in set/rep/RPE prescription",
                 why: "Loads calibrated to journal/training.md working weights; RPE caps the day.",
                 strength: [
-                  { exercise: "Squat", sets: 3, reps: "5", rpe: 7, weight: "80 kg" },
+                  { exercise: "Squat", work: [
+                    { weight: "60 kg", reps: "5", rpe: 5 },
+                    { weight: "70 kg", reps: "5", rpe: 6 },
+                    { weight: "80 kg", reps: "5", rpe: 7 },
+                  ] },
                   { exercise: "Bench Press", sets: 3, reps: "6-8", rpe: 8, weight: "60 kg" },
                   { exercise: "Row", sets: 3, reps: "8-10", rpe: 8 },
                 ],
@@ -464,7 +484,11 @@ export const snapshot: Snapshot = {
                 title: "Deadlift · back-off day", meta: "top set capped, volume trimmed",
                 why: "Recovery 48 vs a 61 average, HRV 41 under its 46 baseline — the overreach gate is shut today. Pull a comfortable top set and bank the session; the cut already taxes recovery.",
                 strength: [
-                  { exercise: "Deadlift", sets: 3, reps: "3", rpe: 7, weight: "130 kg" },
+                  { exercise: "Deadlift", work: [
+                    { weight: "110 kg", reps: "3", rpe: 6 },
+                    { weight: "125 kg", reps: "3", rpe: 7 },
+                    { weight: "130 kg", reps: "3", rpe: 7 },
+                  ] },
                   { exercise: "Romanian Deadlift", sets: 2, reps: "8", rpe: 7, weight: "90 kg" },
                   { exercise: "Back Extension", sets: 2, reps: "12", rpe: 7 },
                 ],
@@ -473,7 +497,12 @@ export const snapshot: Snapshot = {
                 title: "Deadlift · prescribed", meta: "the baseline pulling day",
                 why: "Loads from journal/training.md working weights; RPE caps each lift so a hard day on a cut doesn't turn into a hole.",
                 strength: [
-                  { exercise: "Deadlift", sets: 4, reps: "3", rpe: 8, weight: "150 kg" },
+                  { exercise: "Deadlift", work: [
+                    { weight: "120 kg", reps: "3", rpe: 6 },
+                    { weight: "135 kg", reps: "3", rpe: 7 },
+                    { weight: "150 kg", reps: "3", rpe: 8 },
+                    { weight: "150 kg", reps: "3", rpe: 8 },
+                  ] },
                   { exercise: "Romanian Deadlift", sets: 3, reps: "8", rpe: 8, weight: "100 kg" },
                   { exercise: "Back Extension", sets: 3, reps: "12", rpe: 8 },
                 ],
@@ -482,7 +511,12 @@ export const snapshot: Snapshot = {
                 title: "Deadlift · AMRAP top set", meta: "one all-out set — gated, not offered today",
                 why: "Feeling 200 would add an AMRAP single at 160 — but ONLY with recovery AND HRV above baseline, and today both are below (48 vs 61, 41 vs 46). Shown so the ceiling is visible; the gate says no.",
                 strength: [
-                  { exercise: "Deadlift", sets: 4, reps: "3 + AMRAP", rpe: 9, weight: "150 / 160 kg" },
+                  { exercise: "Deadlift", work: [
+                    { weight: "120 kg", reps: "3", rpe: 6 },
+                    { weight: "140 kg", reps: "3", rpe: 7 },
+                    { weight: "150 kg", reps: "3", rpe: 8 },
+                    { weight: "160 kg", reps: "3+ AMRAP", rpe: 9 },
+                  ] },
                   { exercise: "Romanian Deadlift", sets: 3, reps: "8", rpe: 8, weight: "100 kg" },
                   { exercise: "Back Extension", sets: 3, reps: "12", rpe: 8 },
                 ],

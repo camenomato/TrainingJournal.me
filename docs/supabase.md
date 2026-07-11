@@ -50,3 +50,36 @@ grant execute on function inbox_pending_count() to anon;
 
 Anything sitting in the inbox for more than a day means your sync didn't
 run; the dashboard can show "N entries waiting" via `inbox_pending_count`.
+
+## Together / shared mode
+
+The **Together** tab shows several people side by side. There is no shared
+database of private metrics — the same inbox is the only shared surface, and
+it is **insert-only**. You never read another person's private tables; you
+see exactly what each person *chose to post*. Sharing is opt-in by
+construction: private data (health.md, raw readings) never enters the inbox.
+
+Configure it manually — it's a preference, not a wizard. Two topologies:
+
+**1. One agent, many sources (household / coach).** A single machine holds
+several people's clones (or one clone with a `person` per athlete) and one
+Claude has MCP access to each person's trackers. It pulls everyone's data
+locally and bakes all of them into the one deployed snapshot. The Together
+cards read straight from that local snapshot — nothing crosses the network
+except the finished, secret-free bundle. This is what the example ships.
+
+**2. Many people, one inbox.** Each person runs their own clone and points
+their notebook at the **same** Supabase project (same URL + anon key). The
+`person` field tags who a row is for; the drain already routes each row to
+the right person's `journal/entries/`. Anyone can post a check-in, a
+`coach-note`, or a kudos to anyone else — insert-only, so posting is the
+whole permission model. Whoever runs `/sync` drains the shared inbox and
+regenerates the snapshot. Each person still decides what of their own data
+becomes a Together card by what they publish into their snapshot; the inbox
+only carries what was deliberately typed and sent.
+
+Either way the invariant holds: **the inbox is a one-way mailbox, never a
+readable store of anyone's private metrics.** If you later want true
+cross-reading (shared per-person snapshots behind the gate), that is the
+Tier-2 upgrade in [privacy.md](privacy.md) — a deliberate step, not the
+default.

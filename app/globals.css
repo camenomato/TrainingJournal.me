@@ -144,6 +144,8 @@ table.fuel-table tr.total td { border-top: 2px solid var(--ink); border-bottom: 
 table.strength { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; margin: 10px 0; }
 table.strength th, table.strength td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line); }
 table.strength th { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); }
+table.strength td.ex { font-weight: 700; vertical-align: top; border-right: 1px solid var(--line); white-space: nowrap; }
+table.strength tr.ex-first td { border-top: 1px solid var(--ink); }
 
 .why { font-size: 14px; color: var(--ink-soft); font-style: italic; }
 .note { font-size: 13.5px; color: var(--flare); font-weight: 600; font-style: normal; }
