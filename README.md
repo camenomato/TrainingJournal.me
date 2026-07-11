@@ -23,12 +23,13 @@ The example snapshot ships with three fictional athletes — an endurance
 runner, a pure lifter, and a hybrid who does both — across tabbed views. All
 data is fictional; `/initiate` replaces it with yours.
 
-**Today** — the hero prediction, a three-tier session picker (overreach
-suggested here because readiness and HRV are both above baseline), and an
-**Inputs · last sync** panel showing when each connected source last
-refreshed:
+**Today** — a two-column dashboard: the hero prediction (with a stale goal
+flagged, struck-through, so the number stops lying to you), the week's plan,
+and the three-tier session picker on the left; a **readiness gauge**, HRV
+trend, and an **Inputs · last sync** panel on the right. The header carries
+the training block, week, and VO₂max:
 
-![Today tab: hero, last-sync panel, week strip, and the tiered session](docs/screenshots/today-forrest.png)
+![Today dashboard: hero, week plan, tiered session, readiness gauge, and last-sync panel](docs/screenshots/today-forrest.png)
 
 **Goals** — running, lifting, and cutting side by side, each bar derived from
 the two numbers printed above it (the hybrid athlete carries all three):

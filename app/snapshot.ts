@@ -15,6 +15,8 @@ export type Metric = {
   higherIsBetter: boolean;
   trend: TrendPoint[];
   source?: string; // which input this came from — matches a Source.name below
+  gauge?: [number, number]; // [min, max] → render as a banded gradient gauge (e.g. readiness [0,100])
+  note?: string; // prose read of the current value (shown in the readiness panel)
 };
 
 // Each connected input and when it last synced. Real inputs land at different
@@ -43,6 +45,7 @@ export type Session = {
   day: string; // "Mon"
   date: string; // YYYY-MM-DD
   label: string;
+  sub?: string; // short day-card detail — pace, top set, etc.
   kind: "run" | "strength" | "other" | "rest";
   status: "done" | "today" | "upcoming" | "rest";
   note?: string; // self-reported context — the sync preserves these
@@ -69,7 +72,14 @@ export type FuelPlan = {
 };
 
 export type PersonData = {
-  headline: { label: string; value: string; detail: string };
+  headline: {
+    label: string;
+    value: string;
+    detail: string;
+    staleGoal?: string; // a goal that no longer matches the block — rendered struck-through
+    gap?: string; // short chip: distance to a valid goal, or why the stale one is flagged
+  };
+  status?: { block: string; week: number; totalWeeks: number; vo2max?: number }; // header context strip
   goals?: Goal[]; // from journal/goals.md — omit until /initiate fills them
   metrics: Metric[]; // readiness + hrv (if present) drive the suggested tier
   week: Session[];
@@ -113,8 +123,11 @@ export const snapshot: Snapshot = {
         headline: {
           label: "Predicted Marathon",
           value: "3:12",
-          detail: "goal: sub-3:00 at Chicago — plan holds 5 run days and ~55 km/week",
+          staleGoal: "sub-2:00 goal",
+          gap: "old half PB",
+          detail: "That sub-2:00 target is a half-marathon PB from last year — it doesn't match the marathon block you're in now. Worth clearing so the number stops lying to you. The live goal is sub-3:00 at Chicago.",
         },
+        status: { block: "Marathon block", week: 6, totalWeeks: 18, vo2max: 52.4 },
         goals: [
           {
             kind: "running",
@@ -144,6 +157,8 @@ export const snapshot: Snapshot = {
         metrics: [
           {
             key: "readiness", label: "Readiness", unit: "/ 100", current: 72, weeklyAverage: 64, higherIsBetter: true, source: "Garmin",
+            gauge: [0, 100],
+            note: "72 is a green morning — above the 64 average, HRV over baseline, resting HR easing to 49. This is the kind of day the tempo's overreach tier exists for; the discipline is banking it so tomorrow's 30K long run is the week's real work.",
             trend: [
               { date: "2026-06-12", value: 60 }, { date: "2026-06-19", value: 63 }, { date: "2026-06-26", value: 58 },
               { date: "2026-07-01", value: 65 }, { date: "2026-07-04", value: 68 }, { date: "2026-07-07", value: 64 },
@@ -173,13 +188,13 @@ export const snapshot: Snapshot = {
           },
         ],
         week: [
-          { day: "Sun", date: "2026-07-05", label: "Long run 28K", kind: "run", status: "done" },
-          { day: "Mon", date: "2026-07-06", label: "Easy 6K", kind: "run", status: "done" },
-          { day: "Tue", date: "2026-07-07", label: "Intervals 5x1K", kind: "run", status: "done" },
+          { day: "Sun", date: "2026-07-05", label: "Long run 28K", sub: "5:41/km", kind: "run", status: "done" },
+          { day: "Mon", date: "2026-07-06", label: "Easy 6K", sub: "6:12/km", kind: "run", status: "done" },
+          { day: "Tue", date: "2026-07-07", label: "Intervals 5x1K", sub: "3:58/km reps", kind: "run", status: "done" },
           { day: "Wed", date: "2026-07-08", label: "Rest", kind: "rest", status: "rest" },
-          { day: "Thu", date: "2026-07-09", label: "Easy 8K", kind: "run", status: "done" },
+          { day: "Thu", date: "2026-07-09", label: "Easy 8K", sub: "6:05/km", kind: "run", status: "done" },
           {
-            day: "Fri", date: "2026-07-10", label: "Tempo 8K", kind: "run", status: "today",
+            day: "Fri", date: "2026-07-10", label: "Tempo 8K", sub: "~threshold", kind: "run", status: "today",
             tiers: {
               under: {
                 title: "Easy Run · 8K", meta: "tempo shelved — all conversational",
@@ -240,6 +255,7 @@ export const snapshot: Snapshot = {
           value: "52:30",
           detail: "hybrid block: sub-50 10K by November AND a 100 kg squat — 3 run days + 2 lift days, HRV avg 52",
         },
+        status: { block: "Hybrid base", week: 4, totalWeeks: 12, vo2max: 48.1 },
         goals: [
           {
             kind: "running",
@@ -269,6 +285,8 @@ export const snapshot: Snapshot = {
         metrics: [
           {
             key: "readiness", label: "Readiness", unit: "/ 100", current: 74, weeklyAverage: 66, higherIsBetter: true, source: "Garmin",
+            gauge: [0, 100],
+            note: "74 against a 66 average, HRV 55 over its 52 baseline, and last night's surplus still in the tank — recovery is ahead of the load. Today clears the overreach gate on both the run and the lift.",
             trend: [
               { date: "2026-06-12", value: 58 }, { date: "2026-06-19", value: 61 }, { date: "2026-06-26", value: 55 },
               { date: "2026-07-01", value: 63 }, { date: "2026-07-04", value: 70 }, { date: "2026-07-07", value: 66 },
@@ -389,6 +407,7 @@ export const snapshot: Snapshot = {
           value: "128 kg",
           detail: "goal: 140 kg by September — mid-cut, so holding strength is the win, not adding it",
         },
+        status: { block: "Cut phase", week: 5, totalWeeks: 10, vo2max: 41.0 },
         goals: [
           {
             kind: "lifting",
@@ -410,6 +429,8 @@ export const snapshot: Snapshot = {
         metrics: [
           {
             key: "readiness", label: "Recovery", unit: "%", current: 48, weeklyAverage: 61, higherIsBetter: true, source: "Whoop",
+            gauge: [0, 100],
+            note: "48 against a 61 average and HRV under baseline — a cut spends recovery, and this is what that looks like. The gate stays shut: today drops to the back-off tier by design, not by failure. Eat, sleep, and let it climb.",
             trend: [
               { date: "2026-06-26", value: 64 }, { date: "2026-07-01", value: 59 }, { date: "2026-07-04", value: 66 },
               { date: "2026-07-07", value: 57 }, { date: "2026-07-09", value: 55 }, { date: "2026-07-10", value: 48 },

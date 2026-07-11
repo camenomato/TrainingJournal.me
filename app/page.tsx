@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { snapshot, type Person, type PersonData, type Session, type Source, type Tier } from "./snapshot";
+import { snapshot, type Metric, type Person, type PersonData, type Session, type Source, type Tier } from "./snapshot";
 import { TrendChart } from "./TrendChart";
 import { Notebook } from "./Notebook";
 import { deriveGateHash } from "./gate";
@@ -58,6 +58,38 @@ function Gate({ onUnlock }: { onUnlock: () => void }) {
       <button type="submit" disabled={busy}>{busy ? "Checking…" : "Unlock"}</button>
       {err && <p className="err">That&apos;s not it.</p>}
     </form>
+  );
+}
+
+// The readiness score as a banded gradient gauge (red → amber → green) with a
+// marker at the value and a tick at the weekly average. Reads higher-is-better.
+function ReadinessGauge({ metric }: { metric: Metric }) {
+  const [min, max] = metric.gauge ?? [0, 100];
+  const clamp = (v: number) => Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100));
+  const pct = clamp(metric.current);
+  const avgPct = metric.weeklyAverage !== undefined ? clamp(metric.weeklyAverage) : null;
+  const band = metric.current >= 70 ? "high" : metric.current >= 50 ? "balanced" : "low";
+  const bandLabel = band === "high" ? "Primed" : band === "balanced" ? "Balanced" : "Low";
+
+  return (
+    <div className="card gauge-card">
+      <div className="tag">{metric.label}</div>
+      <div className="gauge-head">
+        <span className="gauge-num" data-band={band}>{metric.current}</span>
+        <span className="gauge-band" data-band={band}>{bandLabel}</span>
+      </div>
+      <div className="gauge">
+        <div className="gauge-track" />
+        {avgPct !== null && <div className="gauge-avg" style={{ left: `${avgPct}%` }} />}
+        <div className="gauge-marker" style={{ left: `${pct}%` }} />
+      </div>
+      <div className="gauge-scale">
+        <span>{min}</span>
+        {metric.weeklyAverage !== undefined && <span>avg {metric.weeklyAverage}</span>}
+        <span>{max}</span>
+      </div>
+      {metric.note && <p className="why" style={{ margin: "12px 0 0" }}>{metric.note}</p>}
+    </div>
   );
 }
 
@@ -263,6 +295,8 @@ export default function Page() {
   const d = person.data;
   const today = d.week.find((s) => s.status === "today");
   const upNext = d.week.find((s) => s.status === "upcoming" && s.tiers);
+  const readiness = d.metrics.find((m) => m.key === "readiness");
+  const hrv = d.metrics.find((m) => m.key === "hrv");
 
   // Tabs are the union across people, so a sparse snapshot never shows an
   // empty tab. Together only appears when there's more than one person.
@@ -282,7 +316,19 @@ export default function Page() {
     <div className="wrap">
       <header className="site">
         <div className="wordmark">TRAINING<span>JOURNAL</span></div>
-        <span className="sub">local-first<br />updated {snapshot.updatedAt}</span>
+        <div className="site-meta">
+          {d.status && (
+            <div className="status-line">
+              {d.status.block} · Week {String(d.status.week).padStart(2, "0")}/{d.status.totalWeeks}
+            </div>
+          )}
+          <div className="status-sub">
+            {d.status?.vo2max !== undefined && (
+              <span className="vo2">VO<sub>2</sub> {d.status.vo2max.toFixed(1)}</span>
+            )}
+            <span className="upd">local-first · updated {snapshot.updatedAt}</span>
+          </div>
+        </div>
       </header>
 
       <nav className="tabs">
@@ -302,51 +348,79 @@ export default function Page() {
       )}
 
       {tab === "today" && (
-        <>
-          <div className="card hero">
-            <div className="bib">{d.headline.label}</div>
-            <span className="hint" style={{ textTransform: "uppercase", letterSpacing: ".12em" }}>Current fitness says</span>
-            <div className="hero-num">{d.headline.value}</div>
-            <p className="why" style={{ margin: "6px 0 0" }}>{d.headline.detail}</p>
+        <div className="dash">
+          <div className="dash-main">
+            <div className="card hero">
+              <div className="bib">{d.headline.label}</div>
+              <span className="hint upper">Current fitness says</span>
+              <div className="hero-num">{d.headline.value}</div>
+              {d.headline.staleGoal && (
+                <div className="stale-row">
+                  <span className="stale-goal">{d.headline.staleGoal}</span>
+                  {d.headline.gap && <span className="gap-chip">{d.headline.gap}</span>}
+                </div>
+              )}
+              <p className="why" style={{ margin: "10px 0 0" }}>{d.headline.detail}</p>
+            </div>
+
+            <h2 className="section">Coming up</h2>
+            {d.sources && d.sources.length > 0 && (
+              <p className="hint" style={{ margin: "-4px 0 8px" }}>
+                Sourced from {d.sources.map((s) => s.name).join(" → ")} · a plan you can read
+              </p>
+            )}
+            <div className="week-strip">
+              {d.week.map((s) => (
+                <div key={s.date} className="week-day" data-today={s.status === "today"} data-status={s.status}>
+                  <div className="d">{s.day}</div>
+                  <div className="l">{s.label}</div>
+                  {s.sub && <div className="wd-sub">{s.sub}</div>}
+                  {s.status === "done" && <div className="wd-status">✓ done</div>}
+                  {s.status === "today" && <div className="wd-status">● today</div>}
+                </div>
+              ))}
+            </div>
+
+            {today && (
+              <>
+                <h2 className="section">Inspecting — {today.day}</h2>
+                <SessionCard session={today} data={d} />
+              </>
+            )}
+
+            {upNext && (
+              <>
+                <h2 className="section">Up next</h2>
+                <SessionCard session={upNext} data={d} />
+              </>
+            )}
           </div>
 
-          {d.sources && d.sources.length > 0 && (
-            <>
-              <h2 className="section">Inputs · last sync</h2>
-              <SourcesPanel sources={d.sources} />
-            </>
-          )}
-
-          <h2 className="section">This week</h2>
-          <div className="week-strip">
-            {d.week.map((s) => (
-              <div key={s.date} className="week-day" data-today={s.status === "today"} data-status={s.status}>
-                <div className="d">{s.day}</div>
-                <div className="l">{s.label}</div>
+          <aside className="dash-side">
+            {readiness?.gauge && <ReadinessGauge metric={readiness} />}
+            {hrv && (
+              <TrendChart
+                data={hrv.trend}
+                label={hrv.label}
+                unit={hrv.unit}
+                decimals={hrv.decimals ?? 0}
+                defaultWindowDays={30}
+                today={snapshot.updatedAt}
+                color="var(--track)"
+              />
+            )}
+            {d.sources && d.sources.length > 0 && (
+              <div className="card">
+                <div className="tag">Inputs · last sync</div>
+                <SourcesPanel sources={d.sources} />
               </div>
-            ))}
-          </div>
-
-          {today && (
-            <>
-              <h2 className="section">Today</h2>
-              <SessionCard session={today} data={d} />
-            </>
-          )}
-
-          {upNext && (
-            <>
-              <h2 className="section">Up next</h2>
-              <SessionCard session={upNext} data={d} />
-            </>
-          )}
-
-          <h2 className="section">Coach</h2>
-          <div className="coach">
-            <div className="pin" />
-            <p>&ldquo;{d.coachNote}&rdquo;</p>
-          </div>
-        </>
+            )}
+            <div className="coach">
+              <div className="pin" />
+              <p>&ldquo;{d.coachNote}&rdquo;</p>
+            </div>
+          </aside>
+        </div>
       )}
 
       {tab === "goals" && (
