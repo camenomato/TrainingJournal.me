@@ -100,6 +100,7 @@ export type PersonData = {
   metrics: Metric[]; // readiness + hrv (if present) drive the suggested tier
   week: Session[];
   fuel?: FuelPlan; // today's plan from journal/meals.md — omit if unused
+  quickMeals?: FuelMeal[]; // go-to meals from the library — one-tap log on the Fuel tab
   sources?: Source[]; // connected inputs + last-sync times
   coachNote: string;
 };
@@ -253,6 +254,12 @@ export const snapshot: Snapshot = {
           note:
             "Endurance day eats high (~2900) with carbs front-loaded — glycogen for the tempo and topped up for tomorrow's 30K. The protein floor is the recovery guard, not the headline.",
         },
+        quickMeals: [
+          { meal: "Banana + peanut butter", portion: "1 banana · 1 tbsp", kcal: 210, proteinG: 6 },
+          { meal: "Recovery shake", portion: "1 scoop whey · 1 banana · oat milk", kcal: 330, proteinG: 28 },
+          { meal: "Rice cakes + honey", portion: "3 cakes · 1 tbsp honey", kcal: 220, proteinG: 4 },
+          { meal: "Bagel + jam", portion: "1 bagel · 1 tbsp jam", kcal: 320, proteinG: 10 },
+        ],
         sources: [
           { name: "Garmin", detail: "readiness · HRV · resting HR · sleep", lastSync: "2026-07-10 06:12" },
           { name: "Strava", detail: "runs · weekly volume", lastSync: "2026-07-10 18:40" },
@@ -409,6 +416,12 @@ export const snapshot: Snapshot = {
           note:
             "Cut target is 2200 (maintenance ~2500 − 300). Yesterday closed +320 — that surplus is banked as glycogen, and today's plan spent it on the overreach interval tier.",
         },
+        quickMeals: [
+          { meal: "Greek yogurt + granola", portion: "200 g yogurt · 40 g granola", kcal: 320, proteinG: 20 },
+          { meal: "Protein shake + banana", portion: "1 scoop · 1 banana", kcal: 250, proteinG: 26 },
+          { meal: "Chicken + rice box", portion: "150 g chicken · 1 cup rice", kcal: 520, proteinG: 42 },
+          { meal: "Eggs on toast", portion: "2 eggs · 2 slices", kcal: 340, proteinG: 20 },
+        ],
         sources: [
           { name: "Garmin", detail: "readiness · HRV · resting HR · sleep", lastSync: "2026-07-10 06:38" },
           { name: "Strava", detail: "runs · rides", lastSync: "2026-07-10 19:12" },
@@ -538,6 +551,12 @@ export const snapshot: Snapshot = {
           note:
             "Cut day: 2000 against ~2450 maintenance. The protein floor is high (150 g) on purpose — it's the lever that keeps the squat at 128 while the scale drops.",
         },
+        quickMeals: [
+          { meal: "Whey shake (water)", portion: "1.5 scoops", kcal: 170, proteinG: 36 },
+          { meal: "Egg white omelette", portion: "6 whites · veg", kcal: 160, proteinG: 24 },
+          { meal: "Chicken + rice", portion: "180 g chicken · 1 cup rice", kcal: 500, proteinG: 48 },
+          { meal: "Cottage cheese + berries", portion: "200 g · handful", kcal: 200, proteinG: 24 },
+        ],
         sources: [
           { name: "Whoop", detail: "recovery · HRV · resting HR · strain", lastSync: "2026-07-10 07:05" },
           { name: "Hevy", detail: "lifting sets · PRs", lastSync: "2026-07-10 20:40" },

@@ -49,10 +49,13 @@ and top-goal progress:
 
 ![Together tab comparing three athletes side by side](docs/screenshots/together.png)
 
-**Fuel** — the day's meal plan from your pre-saved library, totalled against
-the calorie target and protein floor:
+**Fuel** — the day's meal plan totalled against the calorie target and protein
+floor, plus **Quick meals**: your go-to foods as one-tap log buttons, and
+**save-your-own** custom meals (cached in the browser, filed into your journal
+at the next sync). Logging posts a `meal` entry to the inbox, or copies the
+line when there's no inbox:
 
-![Cut-day meal plan with kcal and protein totals](docs/screenshots/fuel-cutting.png)
+![Fuel tab: meal plan totals, one-tap quick meals, and the save-your-own custom meal form](docs/screenshots/fuel-cutting.png)
 
 **Trends** — sparse-by-design charts, each captioned with the input it came
 from and its last sync:
