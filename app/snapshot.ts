@@ -14,6 +14,16 @@ export type Metric = {
   weeklyAverage?: number;
   higherIsBetter: boolean;
   trend: TrendPoint[];
+  source?: string; // which input this came from — matches a Source.name below
+};
+
+// Each connected input and when it last synced. Real inputs land at different
+// times (a watch every morning, a lifting app after the session, meals typed
+// by hand) — showing the divergence honestly is the point.
+export type Source = {
+  name: string; // "Garmin", "Strava", "Whoop", "Manual log"…
+  detail: string; // what it feeds
+  lastSync: string; // honest local timestamp, "YYYY-MM-DD HH:MM"
 };
 
 export type Tier = "under" | "target" | "over";
@@ -64,6 +74,7 @@ export type PersonData = {
   metrics: Metric[]; // readiness + hrv (if present) drive the suggested tier
   week: Session[];
   fuel?: FuelPlan; // today's plan from journal/meals.md — omit if unused
+  sources?: Source[]; // connected inputs + last-sync times
   coachNote: string;
 };
 
@@ -84,8 +95,10 @@ export type Snapshot = {
 };
 
 // ---------------------------------------------------------------------------
-// FICTIONAL example data ("Alex Example") — replace via /initiate and /sync.
-// Sparse trend points are deliberate: real data is sparse; never interpolate.
+// FICTIONAL example data — three archetypes: an endurance runner, a lifter,
+// and a hybrid who does both. Names are pop-culture placeholders; replace the
+// whole thing via /initiate and /sync. Sparse trend points are deliberate:
+// real data is sparse; never interpolate.
 // ---------------------------------------------------------------------------
 
 export const snapshot: Snapshot = {
@@ -94,13 +107,138 @@ export const snapshot: Snapshot = {
   supabase: null, // fill { url, anonKey } after docs/supabase.md setup
   people: [
     {
-      id: "alex",
-      name: "Alex Example",
+      id: "forrest",
+      name: "Forrest Gump",
+      data: {
+        headline: {
+          label: "Predicted Marathon",
+          value: "3:12",
+          detail: "goal: sub-3:00 at Chicago — plan holds 5 run days and ~55 km/week",
+        },
+        goals: [
+          {
+            kind: "running",
+            label: "Sub-3:00 marathon",
+            current: "3:12 predicted",
+            target: "2:59 · Oct",
+            progressPct: 60,
+            detail: "From a 3:30 open in February — 18 min down, 13 to go. The tempo and long run carry the block.",
+          },
+          {
+            kind: "running",
+            label: "55 km weeks",
+            current: "48 km this week",
+            target: "55 km/wk",
+            progressPct: 53,
+            detail: "Built up from 40 km in spring. Volume climbs ~2 km/week; the easy days are what protect it.",
+          },
+          {
+            kind: "running",
+            label: "32 km long run",
+            current: "28 km longest",
+            target: "32 km · Sep",
+            progressPct: 50,
+            detail: "One long run every weekend, +2 km a fortnight. Fuel mid-run once past 90 minutes.",
+          },
+        ],
+        metrics: [
+          {
+            key: "readiness", label: "Readiness", unit: "/ 100", current: 72, weeklyAverage: 64, higherIsBetter: true, source: "Garmin",
+            trend: [
+              { date: "2026-06-12", value: 60 }, { date: "2026-06-19", value: 63 }, { date: "2026-06-26", value: 58 },
+              { date: "2026-07-01", value: 65 }, { date: "2026-07-04", value: 68 }, { date: "2026-07-07", value: 64 },
+              { date: "2026-07-09", value: 69 }, { date: "2026-07-10", value: 72 },
+            ],
+          },
+          {
+            key: "hrv", label: "HRV", unit: "ms", current: 58, weeklyAverage: 54, higherIsBetter: true, source: "Garmin",
+            trend: [
+              { date: "2026-06-14", value: 51 }, { date: "2026-06-21", value: 53 }, { date: "2026-06-28", value: 52 },
+              { date: "2026-07-03", value: 55 }, { date: "2026-07-06", value: 54 }, { date: "2026-07-10", value: 58 },
+            ],
+          },
+          {
+            key: "rhr", label: "Resting HR", unit: "bpm", current: 49, weeklyAverage: 51, higherIsBetter: false, source: "Garmin",
+            trend: [
+              { date: "2026-06-15", value: 53 }, { date: "2026-06-25", value: 52 }, { date: "2026-07-03", value: 51 },
+              { date: "2026-07-07", value: 50 }, { date: "2026-07-10", value: 49 },
+            ],
+          },
+          {
+            key: "vol", label: "Weekly volume", unit: "km", current: 48, weeklyAverage: 44, higherIsBetter: true, source: "Strava",
+            trend: [
+              { date: "2026-06-14", value: 40 }, { date: "2026-06-21", value: 42 }, { date: "2026-06-28", value: 45 },
+              { date: "2026-07-05", value: 44 }, { date: "2026-07-10", value: 48 },
+            ],
+          },
+        ],
+        week: [
+          { day: "Sun", date: "2026-07-05", label: "Long run 28K", kind: "run", status: "done" },
+          { day: "Mon", date: "2026-07-06", label: "Easy 6K", kind: "run", status: "done" },
+          { day: "Tue", date: "2026-07-07", label: "Intervals 5x1K", kind: "run", status: "done" },
+          { day: "Wed", date: "2026-07-08", label: "Rest", kind: "rest", status: "rest" },
+          { day: "Thu", date: "2026-07-09", label: "Easy 8K", kind: "run", status: "done" },
+          {
+            day: "Fri", date: "2026-07-10", label: "Tempo 8K", kind: "run", status: "today",
+            tiers: {
+              under: {
+                title: "Easy Run · 8K", meta: "tempo shelved — all conversational",
+                why: "If the legs are flat, drop the threshold work and run easy. Tomorrow's long run is the week's real currency; don't borrow from it.",
+                segments: [{ label: "8K conversational", intensity: "easy", widthPct: 100 }],
+              },
+              target: {
+                title: "Tempo · 8K", meta: "2K warm up → 5K @ threshold → 1K cool down",
+                why: "The baseline quality day — sit right at threshold, controlled and repeatable, not a race.",
+                segments: [
+                  { label: "2K warm up", intensity: "easy", widthPct: 25 },
+                  { label: "5K @ threshold", intensity: "mod", widthPct: 55 },
+                  { label: "1K cool down", intensity: "easy", widthPct: 20 },
+                ],
+              },
+              over: {
+                title: "Tempo · 10K", meta: "7K at threshold instead of 5K",
+                why: "Feeling 200 — ONLY with readiness and HRV both above baseline (they are: 72 vs 64, 58 vs 54). Add 2K at the same effort, not faster. Then eat and sleep for tomorrow's long run.",
+                segments: [
+                  { label: "2K warm up", intensity: "easy", widthPct: 20 },
+                  { label: "7K @ threshold", intensity: "mod", widthPct: 62 },
+                  { label: "1K cool down", intensity: "easy", widthPct: 18 },
+                ],
+              },
+            },
+          },
+          { day: "Sat", date: "2026-07-11", label: "Long run 30K", kind: "run", status: "upcoming" },
+        ],
+        fuel: {
+          dayLabel: "quality day template · journal/meals.md",
+          meals: [
+            { meal: "Oats + banana + honey", portion: "90 g oats · 1 banana", kcal: 520, proteinG: 18 },
+            { meal: "Bagel + eggs", portion: "1 bagel · 2 eggs", kcal: 430, proteinG: 24 },
+            { meal: "Pasta + chicken + veg", portion: "150 g pasta dry · 150 g chicken", kcal: 780, proteinG: 52 },
+            { meal: "Rice bowl + salmon", portion: "1.5 cup rice · 130 g salmon", kcal: 650, proteinG: 38 },
+            { meal: "Yogurt + granola", portion: "200 g yogurt · 40 g granola", kcal: 320, proteinG: 20 },
+          ],
+          targetKcal: 2900,
+          proteinFloorG: 120,
+          note:
+            "Endurance day eats high (~2900) with carbs front-loaded — glycogen for the tempo and topped up for tomorrow's 30K. The protein floor is the recovery guard, not the headline.",
+        },
+        sources: [
+          { name: "Garmin", detail: "readiness · HRV · resting HR · sleep", lastSync: "2026-07-10 06:12" },
+          { name: "Strava", detail: "runs · weekly volume", lastSync: "2026-07-10 18:40" },
+          { name: "Manual log", detail: "meals · check-ins", lastSync: "2026-07-10 20:05" },
+        ],
+        coachNote:
+          "Readiness 72 over a 64 average and HRV above baseline — green light for the tempo's overreach tier, then the discipline is to eat and sleep so tomorrow's 30K long run is the week's real work. Volume's at 48 km, right on the climb toward 55. This is fictional example data — run /initiate to make it yours.",
+      },
+    },
+    {
+      id: "steve",
+      name: "Steve Rogers",
       data: {
         headline: {
           label: "Predicted 10K",
           value: "52:30",
-          detail: "goal: sub-50 by November — plan assumes HRV avg 52 and 3 run days/week",
+          detail: "hybrid block: sub-50 10K by November AND a 100 kg squat — 3 run days + 2 lift days, HRV avg 52",
         },
         goals: [
           {
@@ -130,7 +268,7 @@ export const snapshot: Snapshot = {
         ],
         metrics: [
           {
-            key: "readiness", label: "Readiness", unit: "/ 100", current: 74, weeklyAverage: 66, higherIsBetter: true,
+            key: "readiness", label: "Readiness", unit: "/ 100", current: 74, weeklyAverage: 66, higherIsBetter: true, source: "Garmin",
             trend: [
               { date: "2026-06-12", value: 58 }, { date: "2026-06-19", value: 61 }, { date: "2026-06-26", value: 55 },
               { date: "2026-07-01", value: 63 }, { date: "2026-07-04", value: 70 }, { date: "2026-07-07", value: 66 },
@@ -138,7 +276,7 @@ export const snapshot: Snapshot = {
             ],
           },
           {
-            key: "hrv", label: "HRV", unit: "ms", current: 55, weeklyAverage: 52, higherIsBetter: true,
+            key: "hrv", label: "HRV", unit: "ms", current: 55, weeklyAverage: 52, higherIsBetter: true, source: "Garmin",
             trend: [
               { date: "2026-06-12", value: 49 }, { date: "2026-06-20", value: 51 }, { date: "2026-06-27", value: 50 },
               { date: "2026-07-02", value: 52 }, { date: "2026-07-05", value: 53 }, { date: "2026-07-08", value: 51 },
@@ -146,14 +284,14 @@ export const snapshot: Snapshot = {
             ],
           },
           {
-            key: "rhr", label: "Resting HR", unit: "bpm", current: 57, weeklyAverage: 58, higherIsBetter: false,
+            key: "rhr", label: "Resting HR", unit: "bpm", current: 57, weeklyAverage: 58, higherIsBetter: false, source: "Garmin",
             trend: [
               { date: "2026-06-15", value: 60 }, { date: "2026-06-25", value: 59 }, { date: "2026-07-03", value: 58 },
               { date: "2026-07-07", value: 58 }, { date: "2026-07-10", value: 57 },
             ],
           },
           {
-            key: "calin", label: "Calories in", unit: "kcal", current: 2650, weeklyAverage: 2280, higherIsBetter: true,
+            key: "calin", label: "Calories in", unit: "kcal", current: 2650, weeklyAverage: 2280, higherIsBetter: true, source: "Manual log",
             trend: [
               { date: "2026-07-04", value: 2200 }, { date: "2026-07-05", value: 2150 }, { date: "2026-07-06", value: 2300 },
               { date: "2026-07-07", value: 2100 }, { date: "2026-07-08", value: 2250 }, { date: "2026-07-09", value: 2650 },
@@ -233,8 +371,125 @@ export const snapshot: Snapshot = {
           note:
             "Cut target is 2200 (maintenance ~2500 − 300). Yesterday closed +320 — that surplus is banked as glycogen, and today's plan spent it on the overreach interval tier.",
         },
+        sources: [
+          { name: "Garmin", detail: "readiness · HRV · resting HR · sleep", lastSync: "2026-07-10 06:38" },
+          { name: "Strava", detail: "runs · rides", lastSync: "2026-07-10 19:12" },
+          { name: "Manual log", detail: "meals · check-ins", lastSync: "2026-07-10 21:30" },
+        ],
         coachNote:
           "Readiness 74 against a 66 average, HRV 55 over its 52 baseline, and yesterday's surplus in the tank — today is the day the overreach tier exists for. Worth watching: the last two below-baseline sessions both came two days after 300+ kcal deficit days (2 instances — a hypothesis, not a law yet). This is fictional example data — run /initiate to make it yours.",
+      },
+    },
+    {
+      id: "kratos",
+      name: "Kratos",
+      data: {
+        headline: {
+          label: "Est. Squat 1RM",
+          value: "128 kg",
+          detail: "goal: 140 kg by September — mid-cut, so holding strength is the win, not adding it",
+        },
+        goals: [
+          {
+            kind: "lifting",
+            label: "140 kg squat",
+            current: "128 kg est. 1RM",
+            target: "140 kg · Sep",
+            progressPct: 40,
+            detail: "From 120 kg in March. On a cut the job is to defend the number, not chase it — +8 kg is ahead of plan.",
+          },
+          {
+            kind: "cutting",
+            label: "78 kg lean",
+            current: "80.4 kg (7-day avg)",
+            target: "78.0 kg · Sep",
+            progressPct: 60,
+            detail: "Started 84.0. -0.4 kg/week and steady; the protein floor is what keeps the squat where it is.",
+          },
+        ],
+        metrics: [
+          {
+            key: "readiness", label: "Recovery", unit: "%", current: 48, weeklyAverage: 61, higherIsBetter: true, source: "Whoop",
+            trend: [
+              { date: "2026-06-26", value: 64 }, { date: "2026-07-01", value: 59 }, { date: "2026-07-04", value: 66 },
+              { date: "2026-07-07", value: 57 }, { date: "2026-07-09", value: 55 }, { date: "2026-07-10", value: 48 },
+            ],
+          },
+          {
+            key: "hrv", label: "HRV", unit: "ms", current: 41, weeklyAverage: 46, higherIsBetter: true, source: "Whoop",
+            trend: [
+              { date: "2026-06-27", value: 47 }, { date: "2026-07-02", value: 45 }, { date: "2026-07-05", value: 48 },
+              { date: "2026-07-08", value: 44 }, { date: "2026-07-10", value: 41 },
+            ],
+          },
+          {
+            key: "rhr", label: "Resting HR", unit: "bpm", current: 62, weeklyAverage: 60, higherIsBetter: false, source: "Whoop",
+            trend: [
+              { date: "2026-06-28", value: 59 }, { date: "2026-07-03", value: 60 }, { date: "2026-07-07", value: 61 },
+              { date: "2026-07-10", value: 62 },
+            ],
+          },
+        ],
+        week: [
+          { day: "Sun", date: "2026-07-05", label: "Rest", kind: "rest", status: "rest" },
+          { day: "Mon", date: "2026-07-06", label: "Push", kind: "strength", status: "done" },
+          { day: "Tue", date: "2026-07-07", label: "Pull", kind: "strength", status: "done" },
+          { day: "Wed", date: "2026-07-08", label: "Squat", kind: "strength", status: "done" },
+          { day: "Thu", date: "2026-07-09", label: "Rest", kind: "rest", status: "rest" },
+          {
+            day: "Fri", date: "2026-07-10", label: "Deadlift", kind: "strength", status: "today",
+            tiers: {
+              under: {
+                title: "Deadlift · back-off day", meta: "top set capped, volume trimmed",
+                why: "Recovery 48 vs a 61 average, HRV 41 under its 46 baseline — the overreach gate is shut today. Pull a comfortable top set and bank the session; the cut already taxes recovery.",
+                strength: [
+                  { exercise: "Deadlift", sets: 3, reps: "3", rpe: 7, weight: "130 kg" },
+                  { exercise: "Romanian Deadlift", sets: 2, reps: "8", rpe: 7, weight: "90 kg" },
+                  { exercise: "Back Extension", sets: 2, reps: "12", rpe: 7 },
+                ],
+              },
+              target: {
+                title: "Deadlift · prescribed", meta: "the baseline pulling day",
+                why: "Loads from journal/training.md working weights; RPE caps each lift so a hard day on a cut doesn't turn into a hole.",
+                strength: [
+                  { exercise: "Deadlift", sets: 4, reps: "3", rpe: 8, weight: "150 kg" },
+                  { exercise: "Romanian Deadlift", sets: 3, reps: "8", rpe: 8, weight: "100 kg" },
+                  { exercise: "Back Extension", sets: 3, reps: "12", rpe: 8 },
+                ],
+              },
+              over: {
+                title: "Deadlift · AMRAP top set", meta: "one all-out set — gated, not offered today",
+                why: "Feeling 200 would add an AMRAP single at 160 — but ONLY with recovery AND HRV above baseline, and today both are below (48 vs 61, 41 vs 46). Shown so the ceiling is visible; the gate says no.",
+                strength: [
+                  { exercise: "Deadlift", sets: 4, reps: "3 + AMRAP", rpe: 9, weight: "150 / 160 kg" },
+                  { exercise: "Romanian Deadlift", sets: 3, reps: "8", rpe: 8, weight: "100 kg" },
+                  { exercise: "Back Extension", sets: 3, reps: "12", rpe: 8 },
+                ],
+              },
+            },
+          },
+          { day: "Sat", date: "2026-07-11", label: "Push", kind: "strength", status: "upcoming" },
+        ],
+        fuel: {
+          dayLabel: "cut day template · journal/meals.md",
+          meals: [
+            { meal: "Egg whites + oats", portion: "6 whites · 60 g oats", kcal: 360, proteinG: 32 },
+            { meal: "Chicken + rice + greens", portion: "180 g chicken · 1 cup rice", kcal: 560, proteinG: 48 },
+            { meal: "Whey + banana", portion: "1 scoop · 1 banana", kcal: 240, proteinG: 26 },
+            { meal: "Salmon + potato + salad", portion: "150 g salmon · 200 g potato", kcal: 600, proteinG: 40 },
+          ],
+          targetKcal: 2000,
+          proteinFloorG: 150,
+          note:
+            "Cut day: 2000 against ~2450 maintenance. The protein floor is high (150 g) on purpose — it's the lever that keeps the squat at 128 while the scale drops.",
+        },
+        sources: [
+          { name: "Whoop", detail: "recovery · HRV · resting HR · strain", lastSync: "2026-07-10 07:05" },
+          { name: "Hevy", detail: "lifting sets · PRs", lastSync: "2026-07-10 20:40" },
+          { name: "Manual log", detail: "meals · check-ins", lastSync: "2026-07-08 22:10" },
+        ],
+        coachNote:
+          "Recovery 48 against a 61 average and HRV under baseline — the deadlift day drops to the back-off tier on its own, and the overreach set stays locked. Nothing wrong: a cut spends recovery, and the plan is built to flex down without guilt. This is fictional example data — run /initiate to make it yours.",
       },
     },
   ],

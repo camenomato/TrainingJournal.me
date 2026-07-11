@@ -19,34 +19,37 @@ passing through a drained inbox.
 **Live example: [camenomato.github.io/TrainingJournal.me](https://camenomato.github.io/TrainingJournal.me/)** —
 the dashboard exactly as it ships, rendering the fictional example snapshot.
 
-All data shown is fictional example content — `/initiate` makes it yours.
+The example snapshot ships with three fictional athletes — an endurance
+runner, a pure lifter, and a hybrid who does both — across tabbed views. All
+data is fictional; `/initiate` replaces it with yours.
 
-**Goals** — running, lifting, and cutting side by side, each bar derived
-from the two numbers printed above it:
+**Today** — the hero prediction, a three-tier session picker (overreach
+suggested here because readiness and HRV are both above baseline), and an
+**Inputs · last sync** panel showing when each connected source last
+refreshed:
 
-![Running, lifting, and cutting goals with progress bars](docs/screenshots/goals.png)
+![Today tab: hero, last-sync panel, week strip, and the tiered session](docs/screenshots/today-forrest.png)
 
-**Today's session** — the three-tier picker, overreach suggested because
-readiness and HRV are both above baseline:
+**Goals** — running, lifting, and cutting side by side, each bar derived from
+the two numbers printed above it (the hybrid athlete carries all three):
 
-![Today's session with the underreach / target / overreach tier picker](docs/screenshots/today-tiers.png)
+![Running, lifting, and cutting goals with progress bars](docs/screenshots/goals-hybrid.png)
 
-**Prescribed strength** — sets/reps/RPE/weights, only if you opted in via
-`journal/training.md`:
+**Together** — everyone in one view: each athlete's own secret-free snapshot,
+their freshest sync time (⚠ when an input is stale), today's suggested tier,
+and top-goal progress:
 
-![Prescribed full-body strength session](docs/screenshots/strength.png)
+![Together tab comparing three athletes side by side](docs/screenshots/together.png)
 
-**Fuel** — the day's meal plan from your pre-saved library, with the cut
-target and protein floor in view:
+**Fuel** — the day's meal plan from your pre-saved library, totalled against
+the calorie target and protein floor:
 
-![Meal plan with kcal and protein totals against the cut target](docs/screenshots/mealplan.png)
+![Cut-day meal plan with kcal and protein totals](docs/screenshots/fuel-cutting.png)
 
-<details>
-<summary>Full dashboard — week strip, trends, notebook, coach note</summary>
+**Trends** — sparse-by-design charts, each captioned with the input it came
+from and its last sync:
 
-![Full dashboard view](docs/screenshots/dashboard.png)
-
-</details>
+![Trend charts with per-input source and sync captions](docs/screenshots/trends.png)
 
 ## Quickstart
 
