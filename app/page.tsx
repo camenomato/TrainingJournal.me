@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { snapshot, type Metric, type Person, type PersonData, type Session, type Source, type Tier } from "./snapshot";
 import { TrendChart } from "./TrendChart";
 import { Notebook } from "./Notebook";
+import { QuickMeals } from "./QuickMeals";
 import { deriveGateHash } from "./gate";
 
 const TIER_LABELS: Record<Tier, string> = {
@@ -336,7 +337,7 @@ export default function Page() {
   // Tabs are the union across people, so a sparse snapshot never shows an
   // empty tab. Together only appears when there's more than one person.
   const anyGoals = snapshot.people.some((p) => (p.data.goals?.length ?? 0) > 0);
-  const anyFuel = snapshot.people.some((p) => !!p.data.fuel);
+  const anyFuel = snapshot.people.some((p) => !!p.data.fuel || (p.data.quickMeals?.length ?? 0) > 0);
   const multi = snapshot.people.length > 1;
   const tabs: { id: TabId; label: string }[] = [
     { id: "today", label: "Today" },
@@ -555,6 +556,17 @@ export default function Page() {
             </div>
           ) : (
             <p className="hint">No meal plan for {person.name} yet — log meals or run /initiate.</p>
+          )}
+
+          {d.quickMeals && d.quickMeals.length > 0 && (
+            <>
+              <h2 className="section">Quick meals</h2>
+              <p className="hint" style={{ margin: "-4px 0 0" }}>
+                Your go-to meals — tap one to log it
+                {snapshot.supabase ? " to the inbox" : " (copies the line for your agent)"}. It reaches your journal at the next sync.
+              </p>
+              <QuickMeals meals={d.quickMeals} supabase={snapshot.supabase} personId={person.id} />
+            </>
           )}
         </>
       )}

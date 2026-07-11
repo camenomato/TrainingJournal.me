@@ -19,7 +19,16 @@ relationship between fuel and performance — in both directions.
 3. **Write to the journal**: meal entries go in the day's journal entry
    (entries/YYYY-MM.md) as a `Fuel:` line — meal, kcal (or range), protein
    if known. Browser-side logging arrives via the inbox with kind "meal"
-   (drained like everything else).
+   (drained like everything else) — including one-tap **quick meals**.
+
+## Quick meals (dashboard one-tap logging)
+
+Keep a short favourites list in journal/meals.md under "Quick meals" (~4-6
+repeat meals). `/sync` copies it into the snapshot (`quickMeals`), and the
+Fuel tab renders each as a one-tap button that inserts a `kind:"meal"` inbox
+row (or copies the line when no inbox is configured). This is just the
+low-friction path into the same meal-logging flow above — resolve, estimate,
+and reconcile the drained entries exactly as with any other meal.
 
 ## The day's picture
 

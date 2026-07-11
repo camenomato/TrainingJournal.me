@@ -14,6 +14,17 @@ forever. Update a row when a recipe or portion changes (date it).
 | (fill in — e.g. "oats + whey") | 80 g oats, 1 scoop | ~450 | 35 | breakfast | |
 | (fill in) | | | | | |
 
+## Quick meals (dashboard shortcuts)
+
+A short list of your go-to meals — the ones you eat often enough to log
+without thinking. `/sync` surfaces these on the dashboard's Fuel tab as
+one-tap buttons: tapping posts a `meal` entry to the inbox (or copies the
+line when there's no inbox), drained to your journal like any other log.
+Keep it to ~4-6; they're favourites, not the whole library.
+
+- (fill in — e.g. "oats + whey")
+- (fill in)
+
 ## Day templates (optional)
 
 Common full days, for one-line logging ("training day template + extra rice"):
