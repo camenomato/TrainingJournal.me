@@ -30,6 +30,16 @@ values in place; date time-sensitive facts; new topic → new file.
 docs/sources.md (duplicates, treadmill vs GPS, aggregate endpoints).
 Compare against baselines in `journal/history.md` and call out deviations.
 
+**Meal.** Log meals against the pre-saved library in journal/meals.md
+(one line for repeat meals; honest ranges for unlisted ones). Compute the
+day's calories in (state coverage), expenditure (tracker + calibrated BMR),
+and balance vs target. Feed fuel into planning: surplus today = fuel
+tomorrow (may nudge the suggested tier up, never past readiness gates);
+deficits put fueling notes on quality sessions. Maintain
+journal/analysis/fuel-performance.md pairing daily balance with later
+performance markers, testing 1-5 day lags, surfacing recurring patterns as
+evidence-counted hypotheses.
+
 **Plan.** Read history + training.md + goals + current recovery baselines.
 Produce a dated plan in `journal/plans/` where every session carries three
 tiers (underreach / target / overreach — overreach gated on

@@ -14,7 +14,7 @@ export function Notebook({ supabase, people, defaultPerson }: {
 }) {
   const [text, setText] = useState("");
   const [person, setPerson] = useState(defaultPerson);
-  const [kind, setKind] = useState<"journal" | "checkin" | "coach-note">("journal");
+  const [kind, setKind] = useState<"journal" | "checkin" | "meal" | "coach-note">("journal");
   const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   async function send() {
@@ -44,7 +44,7 @@ export function Notebook({ supabase, people, defaultPerson }: {
       <textarea
         value={text}
         onChange={(e) => { setText(e.target.value); if (state !== "idle") setState("idle"); }}
-        placeholder="What happened, and how did it feel? Entries land in your journal at the next sync."
+        placeholder="What happened, and how did it feel? Meals work too — '2 rotis + dal, late lunch'. Entries land in your journal at the next sync."
       />
       <div className="row">
         {people.length > 1 && (
@@ -55,6 +55,7 @@ export function Notebook({ supabase, people, defaultPerson }: {
         <select value={kind} onChange={(e) => setKind(e.target.value as typeof kind)} aria-label="Entry kind">
           <option value="journal">journal</option>
           <option value="checkin">check-in</option>
+          <option value="meal">meal</option>
           <option value="coach-note">coach note</option>
         </select>
         {supabase ? (

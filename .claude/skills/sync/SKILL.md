@@ -17,10 +17,26 @@ skipped.
 2. **Drain the inbox** (if Supabase is configured): `npm run drain` —
    reads all rows with the local service key, writes each into
    `journal/entries/YYYY-MM.md` keyed by row id (idempotent), deletes the
-   drained rows in the same run. See docs/supabase.md.
+   drained rows in the same run. See docs/supabase.md. Rows with kind
+   "meal" then get resolved against journal/meals.md and totaled per the
+   meal skill (the drain stores the raw text; the sync does the nutrition
+   math).
 3. **Pull fresh daily data** and APPEND real trend points (`{date, value}`)
    to the snapshot's trend arrays — dedup by date, never fabricate or
    interpolate, keep ~400 days. A missing day stays missing.
+   - Include the fuel metrics when meals are logged: calories in (state
+     coverage — partial days are partial), expenditure estimate (tracker
+     active calories + calibrated BMR), and energy balance. Steps and
+     workout calorie estimates cross-check each other; trackers are rough
+     and the sync says so rather than pretending precision.
+   - Update `journal/analysis/fuel-performance.md`: append the day's
+     balance next to its performance markers, and run the lag check (1-5
+     days) per the meal skill. Surface recurring patterns as named
+     hypotheses with evidence counts — never as claimed causation.
+   - Fuel feeds tomorrow: yesterday's surplus ("cheat meal") marks today's
+     or tomorrow's session as glycogen-backed — it may nudge the suggested
+     tier toward overreach ONLY if readiness and HRV also agree. Multi-day
+     deficits put a fueling note on any planned quality session.
 4. **Advance the week**: statuses (done/today/upcoming), preserve any
    self-reported `note` fields (they're user context, not synced data), and
    reflect reality — an unplanned workout on a rest day becomes that

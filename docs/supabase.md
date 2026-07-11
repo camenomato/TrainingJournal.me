@@ -14,7 +14,7 @@ create table inbox (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   person text not null default 'me',
-  kind text not null check (kind in ('journal', 'checkin', 'coach-note')),
+  kind text not null check (kind in ('journal', 'checkin', 'meal', 'coach-note')),
   payload jsonb not null
 );
 

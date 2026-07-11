@@ -105,6 +105,20 @@ export const snapshot: Snapshot = {
               { date: "2026-07-07", value: 58 }, { date: "2026-07-10", value: 57 },
             ],
           },
+          {
+            key: "calin", label: "Calories in", unit: "kcal", current: 2650, weeklyAverage: 2280, higherIsBetter: true,
+            trend: [
+              { date: "2026-07-04", value: 2200 }, { date: "2026-07-05", value: 2150 }, { date: "2026-07-06", value: 2300 },
+              { date: "2026-07-07", value: 2100 }, { date: "2026-07-08", value: 2250 }, { date: "2026-07-09", value: 2650 },
+            ],
+          },
+          {
+            key: "balance", label: "Energy balance", unit: "kcal", current: 320, weeklyAverage: -120, higherIsBetter: true,
+            trend: [
+              { date: "2026-07-04", value: -180 }, { date: "2026-07-05", value: -250 }, { date: "2026-07-06", value: -90 },
+              { date: "2026-07-07", value: -310 }, { date: "2026-07-08", value: -150 }, { date: "2026-07-09", value: 320 },
+            ],
+          },
         ],
         week: [
           { day: "Sun", date: "2026-07-05", label: "Easy 5K", kind: "run", status: "done" },
@@ -134,7 +148,7 @@ export const snapshot: Snapshot = {
               },
               over: {
                 title: "Intervals · 8x400m", meta: "two extra reps, same effort ceiling",
-                why: "Feeling 200 — ONLY if readiness and HRV are both above baseline today (they are: 74 vs 66, 55 vs 52). Extra reps, not faster reps.",
+                why: "Feeling 200 — ONLY if readiness and HRV are both above baseline today (they are: 74 vs 66, 55 vs 52). Last night's +320 kcal is glycogen in the bank — the cheat meal bought these two reps. Extra reps, not faster reps.",
                 segments: [
                   { label: "1.5K warm up", intensity: "easy", widthPct: 26 },
                   { label: "8x400m @ 5K effort", intensity: "hard", widthPct: 52 },
@@ -159,7 +173,7 @@ export const snapshot: Snapshot = {
           },
         ],
         coachNote:
-          "Readiness 74 against a 66 average and HRV 55 over its 52 baseline — today is the day the overreach tier exists for. Tuesday's self-report disagreed with the score; the plan trusted the legs, and the week absorbed it. This is fictional example data — run /initiate to make it yours.",
+          "Readiness 74 against a 66 average, HRV 55 over its 52 baseline, and yesterday's surplus in the tank — today is the day the overreach tier exists for. Worth watching: the last two below-baseline sessions both came two days after 300+ kcal deficit days (2 instances — a hypothesis, not a law yet). This is fictional example data — run /initiate to make it yours.",
       },
     },
   ],

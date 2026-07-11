@@ -50,6 +50,9 @@ test("a new date heading lands above older content (newest first)", () => {
 test("non-journal kinds are tagged and non-text payloads survive", () => {
   const { content } = mergeRow("", row({ kind: "coach-note", payload: { text: "Ease up this week." } }));
   assert.ok(content.includes("coach-note"));
+  const meal = mergeRow("", row({ id: "55555555-5555-5555-5555-555555555555", kind: "meal", payload: { text: "2 rotis + dal, late lunch" } }));
+  assert.ok(meal.content.includes("meal"));
+  assert.ok(meal.content.includes("2 rotis + dal"));
   const j = mergeRow("", row({ id: "44444444-4444-4444-4444-444444444444", payload: { structured: true, rpe: 8 } }));
   assert.ok(j.content.includes('"rpe":8'));
 });

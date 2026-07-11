@@ -36,7 +36,7 @@ passing through a drained inbox.
 | Path | What |
 |---|---|
 | `journal/` | Your data. Markdown, private, the single source of truth |
-| `.claude/skills/` | The harness: initiate · journal · remember · pull-data · plan · sync |
+| `.claude/skills/` | The harness: initiate · journal · remember · pull-data · meal · plan · sync |
 | `AGENTS.md` | The same flows as prose, for non-Claude assistants |
 | `app/` | Static dashboard (Vercel-ready, zero credentials) |
 | `scripts/` | Inbox drain used by `/sync` |
@@ -53,6 +53,17 @@ Plans never prescribe a single take-it-or-leave-it workout. Each session has:
 
 The suggested tier is computed at view time from that day's readiness, HRV
 vs its average, and how you say you feel — never precomputed.
+
+## Fuel is a training signal
+
+Pre-save your repeat meals once (`journal/meals.md`) and logging becomes one
+line — from your agent or from the browser notebook (kind: meal). The sync
+computes calories in, expenditure (tracker + calibrated BMR, steps as a
+cross-check), and energy balance — then uses it: a cheat meal today is
+glycogen tomorrow (the harder session gets scheduled where the fuel is),
+quality sessions during deficits get fueling notes, and the sync **actively
+hunts the lag** between deficit days and below-baseline sessions, surfacing
+recurring patterns as evidence-counted hypotheses — never fake causation.
 
 ## Privacy model, one paragraph
 

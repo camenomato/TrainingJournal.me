@@ -61,8 +61,11 @@ journal/                    the private data (skeletons in the template)
   goals.md                  stated goals, races, target times
   gear.md                   shoes, watch, apps
   health.md                 baselines (RHR, HRV, sleep), conditions
+  meals.md                  pre-saved meal library (portions, kcal, protein),
+                            day templates, targets
   plans/                    generated plans, dated
   entries/YYYY-MM.md        journal — dated, newest-first, append-only
+  analysis/                 sync-maintained analyses (fuel-performance lags)
   people/<slug>/…           additional people (same structure; see §9)
 .claude/skills/             initiate, journal, remember, pull-data, plan, sync
 AGENTS.md                   the same flows for non-Claude harnesses
@@ -113,6 +116,23 @@ append-only journal, subjective-vs-objective divergences recorded explicitly.
   recordings read short (device/watch copy canonical — flag duplicates);
   GPS beats treadmill-mode outdoors; prefer aggregate endpoints over
   intraday payloads; compare against `health.md` baselines.
+- **`/meal`** — fuel tracking as a training signal. Logs meals by resolving
+  against the pre-saved library in `meals.md` (one-line logging for repeat
+  meals; honest RANGES for unlisted ones, never fake precision). Computes
+  the day's calories in (with coverage stated), expenditure (tracker active
+  calories + BMR calibrated against the real weight trend; steps as a
+  cross-check), and energy balance vs target. Browser-side meal logging
+  rides the inbox with kind "meal". Fuel rules feed planning:
+  - **surplus is fuel** — a cheat meal today marks tomorrow as
+    glycogen-backed and may nudge the suggested tier toward overreach,
+    but never overrides readiness/HRV gates;
+  - **deficits and quality sessions don't mix silently** — fueling notes
+    on hard sessions during multi-day deficits; protein floor flagged;
+  - **the deficit-performance lag is actively hunted**: the sync maintains
+    `journal/analysis/fuel-performance.md`, pairing each day's balance
+    with subsequent performance markers and testing 1-5 day lags. Recurring
+    patterns (≥3 instances) surface as named hypotheses with evidence
+    counts — watched and planned around, never claimed as causation.
 - **`/plan`** — the plan builder: reads history + goals + `training.md`
   (split, knowledge level, prescription preference) + current baselines
   (readiness, HRV vs average, recent load), produces a dated plan in
@@ -167,7 +187,7 @@ Supabase is a **mailbox, not a database of record**. Steady state is empty.
 
 - **Schema:** one table `inbox`:
   `id uuid · created_at timestamptz · person text · kind text
-  ("journal" | "checkin" | "coach-note") · payload jsonb`.
+  ("journal" | "checkin" | "meal" | "coach-note") · payload jsonb`.
   Nothing else goes up — no profile, no history, no metrics.
 - **Write path:** the dashboard notebook inserts with the anon key.
   RLS: anon may **insert only** — no select, no delete. The browser can add
@@ -295,7 +315,8 @@ is the living version of this table.
 
 ## 13. v1 scope vs v2
 
-**v1:** template repo, six skills, dashboard (trends/plan/notebook/settings),
+**v1:** template repo, seven skills (incl. meal/fuel tracking with the
+lag-correlation hunt), dashboard (trends/plan/notebook/settings),
 Supabase inbox + drain, password gate, Tier-1 multi-person, AGENTS.md,
 docs with fictional example.
 **v2:** encrypted snapshot, Tier-2 shared dashboards, npm scaffolder,

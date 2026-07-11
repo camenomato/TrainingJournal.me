@@ -35,9 +35,16 @@ and today's recovery numbers (pull-data skill).
 5. **Paces and loads are ceilings** when recovery signals are below
    baseline. Post-illness: subjective recovery lags objective — plans ease
    back in regardless of the score.
-6. **Knowledge level calibrates voice**: new users get the why explained;
+6. **Fuel is a planning input** (meal skill): schedule the week's hardest
+   session where the fuel will be (a known big-meal day means glycogen the
+   day after); put fueling notes on quality sessions that land during
+   deficits; and respect any established fuel-performance hypothesis from
+   journal/analysis/fuel-performance.md (e.g. "no quality 2 days after a
+   big deficit"). Fuel nudges tier suggestions but never overrides
+   readiness/HRV gates.
+7. **Knowledge level calibrates voice**: new users get the why explained;
    advanced users get numbers without lectures.
-7. **Never invent history.** If the data to justify a progression isn't
+8. **Never invent history.** If the data to justify a progression isn't
    there, the progression waits.
 
 ## Output
