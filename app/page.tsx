@@ -443,6 +443,11 @@ export default function Page() {
           </div>
 
           <aside className="dash-side">
+            <div className="coach">
+              <div className="tag">Coach says</div>
+              <div className="pin" />
+              <p>&ldquo;{d.coachNote}&rdquo;</p>
+            </div>
             {readiness?.gauge && <ReadinessGauge metric={readiness} />}
             {hrv && (
               <TrendChart
@@ -461,10 +466,6 @@ export default function Page() {
                 <SourcesPanel sources={d.sources} />
               </div>
             )}
-            <div className="coach">
-              <div className="pin" />
-              <p>&ldquo;{d.coachNote}&rdquo;</p>
-            </div>
           </aside>
         </div>
       )}
@@ -558,16 +559,12 @@ export default function Page() {
             <p className="hint">No meal plan for {person.name} yet — log meals or run /initiate.</p>
           )}
 
-          {d.quickMeals && d.quickMeals.length > 0 && (
-            <>
-              <h2 className="section">Quick meals</h2>
-              <p className="hint" style={{ margin: "-4px 0 0" }}>
-                Your go-to meals — tap one to log it
-                {snapshot.supabase ? " to the inbox" : " (copies the line for your agent)"}. It reaches your journal at the next sync.
-              </p>
-              <QuickMeals meals={d.quickMeals} supabase={snapshot.supabase} personId={person.id} />
-            </>
-          )}
+          <h2 className="section">Quick meals</h2>
+          <p className="hint" style={{ margin: "-4px 0 0" }}>
+            Tap a meal to log it{snapshot.supabase ? " to the inbox" : " (copies the line for your agent)"} — or
+            save your own with ＋ Custom meal.
+          </p>
+          <QuickMeals meals={d.quickMeals ?? []} supabase={snapshot.supabase} personId={person.id} />
         </>
       )}
 

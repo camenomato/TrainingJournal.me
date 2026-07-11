@@ -64,6 +64,25 @@ table.fuel-table tr.total td { border-top: 2px solid var(--ink); border-bottom: 
 .quick-meal[data-state="done"] .qm-state { color: var(--track); opacity: 1; font-weight: 700; }
 .quick-meal[data-state="err"] { border-color: var(--flare); }
 .quick-meal[data-state="err"] .qm-state { color: var(--flare); opacity: 1; font-weight: 700; }
+.quick-meal-wrap { position: relative; display: flex; }
+.quick-meal-wrap .quick-meal { flex: 1; }
+.qm-remove { position: absolute; top: 6px; right: 7px; width: 18px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--line); background: var(--paper); color: var(--ink-soft); font-family: var(--mono); font-size: 13px; cursor: pointer; z-index: 1; }
+.qm-remove:hover { border-color: var(--flare); color: var(--flare); }
+.quick-add { align-items: flex-start; justify-content: center; border-style: dashed; background: transparent; }
+.quick-add .qm-plus { font-family: var(--disp); font-size: 22px; line-height: 1; color: var(--flare); }
+.quick-add[data-open="true"] { border-style: solid; background: var(--paper2); }
+
+/* Custom-meal form */
+.quick-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; padding: 12px; border: 1px solid var(--ink); background: var(--paper2); }
+.quick-form input { font-family: var(--mono); font-size: 12.5px; padding: 8px 10px; border: 1px solid var(--ink); background: var(--paper); color: var(--ink); }
+.quick-form input[type="number"] { width: 92px; }
+.quick-form input:not([type="number"]) { flex: 1 1 180px; min-width: 0; }
+.quick-form button { font-family: var(--mono); font-size: 12px; padding: 8px 14px; border: 1px solid var(--ink); cursor: pointer; text-transform: uppercase; letter-spacing: .05em; }
+.quick-form .qf-save { background: var(--ink); color: var(--paper); }
+.quick-form .qf-once { background: var(--paper); color: var(--ink); }
+.quick-form button:disabled { opacity: .5; cursor: default; }
+.quick-form .qf-state { font-family: var(--mono); font-size: 11px; color: var(--track); }
+.quick-form .qf-state[data-state="err"] { color: var(--flare); }
 
 /* Tabs — underline nav */
 .tabs { display: flex; gap: 24px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); margin: 0 0 22px; }

@@ -30,6 +30,16 @@ row (or copies the line when no inbox is configured). This is just the
 low-friction path into the same meal-logging flow above — resolve, estimate,
 and reconcile the drained entries exactly as with any other meal.
 
+**Custom meals saved from the browser.** The Fuel tab also lets the user add
+their own meal (name, portion, kcal, protein). It is cached in that browser's
+localStorage so it's reusable immediately, and logged like any meal — but the
+inbox payload carries `save: true` and a structured `meal` object. On drain,
+when you see `save: true`: add that meal to the journal/meals.md **Library**
+(and to the **Quick meals** shortlist if it's a genuine repeat), so the next
+snapshot serves it from the source of truth and the browser cache is no longer
+needed. Treat the user's entered numbers as their own estimate; don't override
+them, but flag anything implausible.
+
 ## The day's picture
 
 When asked (or at sync), compute:
