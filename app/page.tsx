@@ -181,8 +181,14 @@ function SessionCard({ session, data }: { session: Session; data: PersonData }) 
           <p className="why">{detail.why}</p>
         </>
       )}
-      {!detail && !session.note && session.kind !== "rest" && session.status === "upcoming" && (
-        <p className="hint">Full detail lands the morning of — workouts are generated day-of from that day&apos;s readiness.</p>
+      {!detail && (
+        <p className="hint">
+          {session.kind === "rest"
+            ? "Rest day — recovery is the session."
+            : session.status === "done"
+            ? `Completed${session.sub ? ` · ${session.sub}` : ""}${session.note ? "." : " — logged from your tracker."}`
+            : `Planned${session.sub ? ` · ${session.sub}` : ""}. Full detail lands the morning of — workouts are generated day-of from that day's readiness.`}
+        </p>
       )}
     </div>
   );
@@ -285,6 +291,7 @@ export default function Page() {
   });
   const [personIdx, setPersonIdx] = useState(0);
   const [tab, setTab] = useState<TabId>("today");
+  const [inspectDate, setInspectDate] = useState<string | null>(null);
 
   // Deep links: `#goals` selects a tab, `#goals.kratos` a tab + person. Read
   // once on mount (never in the useState initializer) so server and first
@@ -316,9 +323,15 @@ export default function Page() {
   const person = snapshot.people[personIdx];
   const d = person.data;
   const today = d.week.find((s) => s.status === "today");
-  const upNext = d.week.find((s) => s.status === "upcoming" && s.tiers);
   const readiness = d.metrics.find((m) => m.key === "readiness");
   const hrv = d.metrics.find((m) => m.key === "hrv");
+
+  // Which day the Inspecting panel shows — click any day in the strip. Defaults
+  // to today; a stored date that isn't in this person's week (e.g. after
+  // switching people) falls back to their today rather than showing nothing.
+  const fallbackSession = today ?? d.week.find((s) => s.status === "upcoming") ?? d.week[0];
+  const inspected =
+    (inspectDate ? d.week.find((s) => s.date === inspectDate) : undefined) ?? fallbackSession;
 
   // Tabs are the union across people, so a sparse snapshot never shows an
   // empty tab. Together only appears when there's more than one person.
@@ -386,14 +399,28 @@ export default function Page() {
             </div>
 
             <h2 className="section">Coming up</h2>
-            {d.sources && d.sources.length > 0 && (
-              <p className="hint" style={{ margin: "-4px 0 8px" }}>
-                Sourced from {d.sources.map((s) => s.name).join(" → ")} · a plan you can read
-              </p>
-            )}
+            <p className="hint" style={{ margin: "-4px 0 8px" }}>
+              {d.sources && d.sources.length > 0
+                ? `Sourced from ${d.sources.map((s) => s.name).join(" → ")} · `
+                : ""}
+              tap any day to inspect it — done, today, or planned.
+            </p>
             <div className="week-strip">
               {d.week.map((s) => (
-                <div key={s.date} className="week-day" data-today={s.status === "today"} data-status={s.status}>
+                <div
+                  key={s.date}
+                  className="week-day"
+                  data-today={s.status === "today"}
+                  data-status={s.status}
+                  data-selected={s.date === inspected?.date}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={s.date === inspected?.date}
+                  onClick={() => setInspectDate(s.date)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setInspectDate(s.date); }
+                  }}
+                >
                   <div className="d">{s.day}</div>
                   <div className="l">{s.label}</div>
                   {s.sub && <div className="wd-sub">{s.sub}</div>}
@@ -403,17 +430,13 @@ export default function Page() {
               ))}
             </div>
 
-            {today && (
+            {inspected && (
               <>
-                <h2 className="section">Inspecting — {today.day}</h2>
-                <SessionCard session={today} data={d} />
-              </>
-            )}
-
-            {upNext && (
-              <>
-                <h2 className="section">Up next</h2>
-                <SessionCard session={upNext} data={d} />
+                <h2 className="section">
+                  Inspecting — {inspected.day}
+                  {inspected.status === "today" ? " · today" : ` · ${inspected.date}`}
+                </h2>
+                <SessionCard key={inspected.date} session={inspected} data={d} />
               </>
             )}
           </div>
