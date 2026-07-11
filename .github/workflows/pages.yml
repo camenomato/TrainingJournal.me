@@ -1,0 +1,58 @@
+# Publishes the example dashboard (fictional data) to GitHub Pages.
+#
+# Deliberately pinned to the template repo itself: private copies made via
+# "Use this template" carry real training data in their snapshot, and this
+# harness never auto-publishes anything the owner didn't opt into. Delete
+# the `if` guard (or this file) consciously if you want Pages for your copy.
+
+name: Deploy example dashboard to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.repository == 'camenomato/TrainingJournal.me'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Creates the Pages site on first run (enablement) — no manual
+      # settings step needed.
+      - id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: enabled
+
+      - run: npm run build
+        env:
+          GITHUB_PAGES: "true"
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
