@@ -14,6 +14,21 @@ storage, and planning happen on your machine. The only things that ever leave
 it are a secret-free dashboard snapshot and (optionally) notebook entries
 passing through a drained inbox.
 
+## What it looks like
+
+Today's session with the three-tier picker — overreach suggested because
+readiness and HRV are both above baseline (all data shown is fictional
+example content; `/initiate` makes it yours):
+
+![Today's session with the underreach / target / overreach tier picker](docs/screenshots/today-tiers.png)
+
+<details>
+<summary>Full dashboard — week strip, prescribed strength, trends, notebook</summary>
+
+![Full dashboard view](docs/screenshots/dashboard.png)
+
+</details>
+
 ## Quickstart
 
 1. Click **Use this template** → create a **private** copy → clone it.
