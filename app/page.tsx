@@ -151,6 +151,29 @@ export default function Page() {
         <p className="why" style={{ margin: "6px 0 0" }}>{d.headline.detail}</p>
       </div>
 
+      {d.goals && d.goals.length > 0 && (
+        <>
+          <h2 className="section">Goals</h2>
+          <div className="goal-grid">
+            {d.goals.map((g) => (
+              <div key={g.label} className="card">
+                <div className="tag">{g.kind}</div>
+                <h3>{g.label}</h3>
+                <div className="goal-nums">
+                  <span>{g.current}</span>
+                  <span className="arrow">→</span>
+                  <span className="want">{g.target}</span>
+                </div>
+                <div className="goal-bar">
+                  <div style={{ width: `${g.progressPct}%` }} />
+                </div>
+                <p className="why" style={{ margin: "8px 0 0" }}>{g.detail}</p>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       <h2 className="section">This week</h2>
       <div className="week-strip">
         {d.week.map((s) => (
@@ -198,6 +221,32 @@ export default function Page() {
           />
         ))}
       </div>
+
+      {d.fuel && (
+        <>
+          <h2 className="section">Fuel</h2>
+          <div className="card" style={{ marginTop: 14 }}>
+            <div className="tag">{d.fuel.dayLabel}</div>
+            <table className="strength fuel-table">
+              <thead>
+                <tr><th>Meal</th><th>Portion</th><th>kcal</th><th>Protein</th></tr>
+              </thead>
+              <tbody>
+                {d.fuel.meals.map((m, i) => (
+                  <tr key={i}><td>{m.meal}</td><td>{m.portion}</td><td>{m.kcal}</td><td>{m.proteinG} g</td></tr>
+                ))}
+                <tr className="total">
+                  <td>Planned</td>
+                  <td className="hint">target {d.fuel.targetKcal} kcal · protein floor {d.fuel.proteinFloorG} g</td>
+                  <td>{d.fuel.meals.reduce((s, m) => s + m.kcal, 0)}</td>
+                  <td>{d.fuel.meals.reduce((s, m) => s + m.proteinG, 0)} g</td>
+                </tr>
+              </tbody>
+            </table>
+            <p className="why" style={{ margin: "4px 0 0" }}>{d.fuel.note}</p>
+          </div>
+        </>
+      )}
 
       <h2 className="section">Notebook</h2>
       <Notebook

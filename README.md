@@ -16,14 +16,33 @@ passing through a drained inbox.
 
 ## What it looks like
 
-Today's session with the three-tier picker — overreach suggested because
-readiness and HRV are both above baseline (all data shown is fictional
-example content; `/initiate` makes it yours):
+**Live example: [camenomato.github.io/TrainingJournal.me](https://camenomato.github.io/TrainingJournal.me/)** —
+the dashboard exactly as it ships, rendering the fictional example snapshot.
+
+All data shown is fictional example content — `/initiate` makes it yours.
+
+**Goals** — running, lifting, and cutting side by side, each bar derived
+from the two numbers printed above it:
+
+![Running, lifting, and cutting goals with progress bars](docs/screenshots/goals.png)
+
+**Today's session** — the three-tier picker, overreach suggested because
+readiness and HRV are both above baseline:
 
 ![Today's session with the underreach / target / overreach tier picker](docs/screenshots/today-tiers.png)
 
+**Prescribed strength** — sets/reps/RPE/weights, only if you opted in via
+`journal/training.md`:
+
+![Prescribed full-body strength session](docs/screenshots/strength.png)
+
+**Fuel** — the day's meal plan from your pre-saved library, with the cut
+target and protein floor in view:
+
+![Meal plan with kcal and protein totals against the cut target](docs/screenshots/mealplan.png)
+
 <details>
-<summary>Full dashboard — week strip, prescribed strength, trends, notebook</summary>
+<summary>Full dashboard — week strip, trends, notebook, coach note</summary>
 
 ![Full dashboard view](docs/screenshots/dashboard.png)
 

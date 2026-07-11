@@ -38,6 +38,15 @@ h2.section { font-family: var(--disp); font-size: 24px; letter-spacing: .02em; m
 h2.section::before { content: ""; width: 26px; height: 4px; background: var(--flare); }
 
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+
+.goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+.goal-nums { font-family: var(--mono); font-size: 12.5px; margin-top: 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+.goal-nums .arrow { color: var(--ink-soft); }
+.goal-nums .want { color: var(--track); font-weight: 700; }
+.goal-bar { height: 10px; border: 1px solid var(--ink); margin-top: 10px; background: var(--paper); }
+.goal-bar div { height: 100%; background: var(--track); }
+
+table.fuel-table tr.total td { border-top: 2px solid var(--ink); border-bottom: none; font-weight: 700; }
 .person-switch { display: flex; gap: 6px; margin-bottom: 18px; }
 .person-switch button, .tier-pill, .zoom-pill { font-family: var(--mono); font-size: 11.5px; padding: 5px 12px; border: 1px solid var(--ink); background: transparent; color: var(--ink-soft); cursor: pointer; text-transform: uppercase; letter-spacing: .04em; }
 .person-switch button[data-active="true"], .tier-pill[data-active="true"], .zoom-pill[data-active="true"] { background: var(--ink); color: var(--paper); }

@@ -39,10 +39,31 @@ export type Session = {
   tiers?: Partial<Record<Tier, SessionTier>>; // day-of only by default
 };
 
+export type Goal = {
+  kind: string; // "running" | "lifting" | "cutting" — free-form
+  label: string;
+  current: string; // both endpoints shown verbatim so the bar stays honest
+  target: string;
+  progressPct: number; // derived from the two numbers above, never invented
+  detail: string;
+};
+
+export type FuelMeal = { meal: string; portion: string; kcal: number; proteinG: number };
+
+export type FuelPlan = {
+  dayLabel: string; // which day template from journal/meals.md this is
+  meals: FuelMeal[];
+  targetKcal: number;
+  proteinFloorG: number;
+  note: string;
+};
+
 export type PersonData = {
   headline: { label: string; value: string; detail: string };
+  goals?: Goal[]; // from journal/goals.md — omit until /initiate fills them
   metrics: Metric[]; // readiness + hrv (if present) drive the suggested tier
   week: Session[];
+  fuel?: FuelPlan; // today's plan from journal/meals.md — omit if unused
   coachNote: string;
 };
 
@@ -81,6 +102,32 @@ export const snapshot: Snapshot = {
           value: "52:30",
           detail: "goal: sub-50 by November — plan assumes HRV avg 52 and 3 run days/week",
         },
+        goals: [
+          {
+            kind: "running",
+            label: "Sub-50 10K",
+            current: "52:30 predicted",
+            target: "49:59 · Nov",
+            progressPct: 62,
+            detail: "From 56:40 in April — 4:10 down, 2:31 to go. Plan holds 3 run days/week.",
+          },
+          {
+            kind: "lifting",
+            label: "Squat 100 kg × 5",
+            current: "80 kg × 5 @ RPE 7",
+            target: "100 kg × 5",
+            progressPct: 50,
+            detail: "From a 60 kg working set in March. +2.5 kg every second week has held so far.",
+          },
+          {
+            kind: "cutting",
+            label: "72 kg race weight",
+            current: "74.6 kg (7-day avg)",
+            target: "72.0 kg · Oct",
+            progressPct: 57,
+            detail: "Started 78.0. The -300 kcal/day target shows in the energy-balance trend; the protein floor guards the lifts.",
+          },
+        ],
         metrics: [
           {
             key: "readiness", label: "Readiness", unit: "/ 100", current: 74, weeklyAverage: 66, higherIsBetter: true,
@@ -172,6 +219,20 @@ export const snapshot: Snapshot = {
             },
           },
         ],
+        fuel: {
+          dayLabel: "training day template · journal/meals.md",
+          meals: [
+            { meal: "Oats + whey", portion: "80 g oats · 1 scoop", kcal: 450, proteinG: 35 },
+            { meal: "Rice + dal + chicken", portion: "1.5 cup rice · 150 g chicken", kcal: 650, proteinG: 42 },
+            { meal: "Curd + fruit", portion: "200 g curd · 1 apple", kcal: 180, proteinG: 15 },
+            { meal: "Rotis + paneer + veg", portion: "3 rotis · 100 g paneer", kcal: 620, proteinG: 28 },
+            { meal: "Post-run banana + whey", portion: "1 banana · 1 scoop", kcal: 250, proteinG: 25 },
+          ],
+          targetKcal: 2200,
+          proteinFloorG: 130,
+          note:
+            "Cut target is 2200 (maintenance ~2500 − 300). Yesterday closed +320 — that surplus is banked as glycogen, and today's plan spent it on the overreach interval tier.",
+        },
         coachNote:
           "Readiness 74 against a 66 average, HRV 55 over its 52 baseline, and yesterday's surplus in the tank — today is the day the overreach tier exists for. Worth watching: the last two below-baseline sessions both came two days after 300+ kcal deficit days (2 instances — a hypothesis, not a law yet). This is fictional example data — run /initiate to make it yours.",
       },
