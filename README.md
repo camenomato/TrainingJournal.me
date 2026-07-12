@@ -50,10 +50,10 @@ and top-goal progress:
 ![Together tab comparing three athletes side by side](docs/screenshots/together.png)
 
 **Fuel** — the day's meal plan totalled against the calorie target and protein
-floor, plus **Quick meals**: your go-to foods as one-tap log buttons, and
-**save-your-own** custom meals (cached in the browser, filed into your journal
-at the next sync). Logging posts a `meal` entry to the inbox, or copies the
-line when there's no inbox:
+floor, plus **Quick meals**: your go-to foods as one-tap log buttons, plus a
+custom-meal form. Every tap posts a `meal` entry to the Supabase inbox (or
+copies the line when there's no inbox); a custom meal is flagged so the next
+sync files it into your library:
 
 ![Fuel tab: meal plan totals, one-tap quick meals, and the save-your-own custom meal form](docs/screenshots/fuel-cutting.png)
 

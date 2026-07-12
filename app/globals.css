@@ -64,10 +64,6 @@ table.fuel-table tr.total td { border-top: 2px solid var(--ink); border-bottom: 
 .quick-meal[data-state="done"] .qm-state { color: var(--track); opacity: 1; font-weight: 700; }
 .quick-meal[data-state="err"] { border-color: var(--flare); }
 .quick-meal[data-state="err"] .qm-state { color: var(--flare); opacity: 1; font-weight: 700; }
-.quick-meal-wrap { position: relative; display: flex; }
-.quick-meal-wrap .quick-meal { flex: 1; }
-.qm-remove { position: absolute; top: 6px; right: 7px; width: 18px; height: 18px; line-height: 1; padding: 0; border: 1px solid var(--line); background: var(--paper); color: var(--ink-soft); font-family: var(--mono); font-size: 13px; cursor: pointer; z-index: 1; }
-.qm-remove:hover { border-color: var(--flare); color: var(--flare); }
 .quick-add { align-items: flex-start; justify-content: center; border-style: dashed; background: transparent; }
 .quick-add .qm-plus { font-family: var(--disp); font-size: 22px; line-height: 1; color: var(--flare); }
 .quick-add[data-open="true"] { border-style: solid; background: var(--paper2); }
